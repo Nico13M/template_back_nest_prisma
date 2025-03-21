@@ -1,21 +1,37 @@
-version: '3.7'
 services:
-  backend:
+  backend-speech:
+    container_name: backend-speech
     build:
-      context: .
+      context: ./
       dockerfile: Dockerfile
-    ports:
-      - '3000:3000'
-    environment:
-      - DATABASE_URL=postgresql://user:test@db:5432/mydb?schema=public
-      - JWT_SECRET=mysecretkey
     depends_on:
-      - db
-  db:
-    image: postgres:latest
+      database-speech:
+        condition: service_healthy
+    ports:
+      - 3000:3000
+      - 5555:5555
+    volumes:
+      - ./:/app
+      - backend-node-modules:/app/node_modules
+    command: npm run start:dev
+    
+
+  database-speech:
+    container_name: database-speech
+    image: postgres:16-alpine
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U user -d speech']
+      interval: 10s
+      timeout: 5s
+    volumes:
+      - backend-data:/var/lib/postgresql/data
+    ports:
+      - 5434:5432
     environment:
       POSTGRES_USER: user
       POSTGRES_PASSWORD: test
-      POSTGRES_DB: mydb
-    ports:
-      - '5432:5432'
+      POSTGRES_DB: speech
+
+volumes:
+  backend-data:
+  backend-node-modules:

@@ -3,8 +3,8 @@ import { APP_PIPE } from '@nestjs/core';
 import { AuthModule } from './auth/auth.module';
 import { PrismaModule } from './prisma/prisma.module';
 import { ConfigModule } from '@nestjs/config';
-import { AuthService } from './auth/auth.service';
-import { AuthController } from './auth/auth.controller';
+import { AppController } from './app.controller';
+import { AppService } from './app.service';
 
 @Module({
   imports: [AuthModule, PrismaModule,
@@ -17,8 +17,8 @@ import { AuthController } from './auth/auth.controller';
       provide: APP_PIPE,
       useClass: ValidationPipe,
     },
-    AuthService,
+    AppService
   ],
-  controllers: [AuthController],
+  controllers: [AppController]
 })
 export class AppModule { }

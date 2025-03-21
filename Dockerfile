@@ -1,20 +1,21 @@
-# Utiliser l'image officielle Node.js
-FROM node:18-alpine
+FROM node:22-alpine
 
-# Définir le répertoire de travail
-WORKDIR /usr/src/app
+# Installer les dépendances nécessaires pour argon2
+RUN apk add --no-cache make gcc g++ python3
 
-# Copier les fichiers de package
+# Créez un répertoire de travail dans le conteneur
+WORKDIR /app
+
+# Copiez le package.json et le package-lock.json dans le conteneur
 COPY package*.json ./
 
-# Installer les dépendances
-RUN npm install
+# Installez les dépendances
+RUN npm install --verbose
 
-# Copier le reste de l'application
+# Copiez le reste des fichiers de l'application dans le conteneur
 COPY . .
 
-# Exposer le port de l'application
+# Exposez le port sur lequel le service écoutera
 EXPOSE 3000
 
-# Lancer l'application
 CMD ["npm", "run", "start:dev"]
